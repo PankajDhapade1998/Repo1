@@ -1,0 +1,85 @@
+Access S3 Storage from a EC2 instance ( In same account )
+
+1. Create a Role name EC2Fullaccess using IAM
+2. Give permission to this role of S3Fullaccess
+3. Attach this role to EC2 instance -> Actions -> Security -> Modify IAM
+4. Install AWS CLI in Linux 
+5. run commands to access S3
+6. aws s3 list
+7. if you want to see metadata of this role
+8. ubuntu@ip-172-31-18-78:~$ TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-	token-ttl-seconds: 21600")
+	curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/iam/security-	credentials/
+9.  curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/iam/security-credentials/Role_name_fill
+10. these access key and secret key are temporary 
+
+
+
+
+IAM delegation - Access S3 Storage Account B from a EC2 instance Account A ( In different account )
+
+
+
+
+AWS IAM Roles vs AWS Configure – Key Concepts
+1. IAM Roles Assignment
+IAM Roles can be assigned to:
+
+Users (via sts:AssumeRole) – for temporary elevated or cross-account access.
+
+Resources (like EC2, Lambda, ECS) – to grant secure programmatic access to other AWS services.
+
+2. EC2 Instance Access
+By default, an EC2 instance has no permissions to access AWS services.
+
+If a user manually configures credentials inside the instance (aws configure), the EC2 gets the same access as that user.
+
+BUT THIS IS BAD PRACTICE due to:
+
+Security risks (static credentials)
+
+No auto-rotation
+
+Violation of least privilege
+
+Poor scalability
+
+3. Best Practice: Use IAM Roles with EC2
+Attach IAM role directly to EC2.
+
+Credentials are securely fetched from instance metadata.
+
+Temporary, auto-rotated credentials.
+
+No need to store secrets.
+
+When to Use aws configure
+Best Use Case: Local Development
+Used on your laptop or on-prem systems to access AWS via CLI/SDK.
+
+Stores credentials in:
+
+~/.aws/credentials (keys)
+
+~/.aws/config (region/output/profile)
+
+Multiple Profiles
+Use aws configure --profile <name> to set up multiple accounts.
+
+Use them via:
+
+aws <command> --profile <name>
+
+Or set: export AWS_PROFILE=dev
+
+Avoid Using on EC2 / Lambda
+Use IAM Roles instead.
+
+Avoid hardcoding access keys in the cloud.
+
+Quick Comparison
+Criteria	IAM Role (EC2, Lambda)	aws configure
+Credentials	Temporary & auto-rotated	Static (manual)
+Security	Best practice	Not secure in cloud
+Ideal Use	AWS resources	Local development
+Scalable/Automated	Yes	No
+Usage in CI/CD	Prefer roles/OIDC	Use only if roles not possible
