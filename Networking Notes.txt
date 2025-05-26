@@ -1,3 +1,6 @@
+Feature Branch Commit
+
+
 To study the OSI model using real-time applications, follow this structured approach, which maps each layer to practical examples and protocols:
 
 ### **1. Choose a Real-Time Application (e.g., Zoom/Video Conferencing)**
