@@ -10,6 +10,12 @@ pipeline{
                 cleanWs()
             }
         }
+
+        stage('from github scm'){
+            steps{
+                  echo "commiting from github"
+                }
+        }
         
         stage('Hello'){
             steps{
